@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Development environment for visualization.matrix
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: visualization-matrix-dev
+    volumes:
+      - .:/workspace
+      - /tmp/.X11-unix:/tmp/.X11-unix  # For X11 forwarding
+    working_dir: /workspace
+    environment:
+      - DISPLAY=${DISPLAY:-host.docker.internal:0}
+    command: sleep infinity
+    networks:
+      - dev-network
+
+  # Kodi instance for testing (optional)
+  kodi:
+    image: xbmc/kodi:matrix
+    container_name: kodi-test
+    ports:
+      - "8080:8080"  # Web interface
+      - "8089:8089"  # Event server
+    volumes:
+      - kodi-data:/kodi/data
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=${DISPLAY:-host.docker.internal:0}
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - dev-network
+    depends_on:
+      - dev
+
+networks:
+  dev-network:
+    driver: bridge
+
+volumes:
+  kodi-data:

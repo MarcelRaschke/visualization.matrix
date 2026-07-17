@@ -1,0 +1,78 @@
+name: Valgrind Memory Leak Detection
+
+on:
+  push:
+    branches: [ master, Matrix, Nexus ]
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.c'
+      - 'src/**'
+      - 'lib/**'
+  pull_request:
+    branches: [ master, Matrix, Nexus ]
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.c'
+      - 'src/**'
+      - 'lib/**'
+
+jobs:
+  valgrind:
+    name: Valgrind Memory Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y valgrind cmake g++ make libgl1-mesa-dev
+
+    - name: Cache Valgrind
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/valgrind
+        key: ${{ runner.os }}-valgrind-${{ hashFiles('src/**', 'lib/**') }}
+        restore-keys: |
+          ${{ runner.os }}-valgrind-
+
+    - name: Build with debug symbols
+      run: |
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug ..
+        make -j$(nproc)
+
+    - name: Run Valgrind
+      run: |
+        cd build
+        # Run valgrind on the visualization addon
+        # Note: This assumes the addon can be run in a test mode
+        # For actual Kodi integration, this would need to be run within Kodi
+        valgrind --leak-check=full \
+                --show-leak-kinds=all \
+                --track-origins=yes \
+                --error-exitcode=1 \
+                --log-file=valgrind-output.txt \
+                ./visualization.matrix 2>&1 || true
+
+    - name: Upload Valgrind report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: valgrind-report
+        path: build/valgrind-output.txt
+        retention-days: 30
+
+    - name: Check for memory leaks
+      run: |
+        cd build
+        if grep -q "definitely lost\|indirectly lost\|possibly lost" valgrind-output.txt; then
+          echo "::error::Memory leaks detected!"
+          cat valgrind-output.txt
+          exit 1
+        fi

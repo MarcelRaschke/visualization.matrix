@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  generate-changelog:
+    name: Generate CHANGELOG
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get version from tag
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Generate changelog entries
+      run: |
+        VERSION=${{ steps.version.outputs.version }}
+        PREV_TAG=$(git describe --tags --abbrev=0 $GITHUB_REF^ 2>/dev/null || echo "0.0.0")
+        
+        echo "## [$VERSION] - $(date +"%Y-%m-%d")" > release-body.md
+        echo "" >> release-body.md
+        
+        # Get commits since last tag
+        git log $PREV_TAG..$GITHUB_REF --pretty=format:"- %s (%h) - %an" --reverse >> release-body.md
+        echo "" >> release-body.md
+        
+        # Get contributors
+        echo "### Contributors" >> release-body.md
+        git log $PREV_TAG..$GITHUB_REF --format='%an' | sort -u | sed 's/^/  - /' >> release-body.md
+
+    - name: Upload release body
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-body
+        path: release-body.md
+
+  create-release:
+    name: Create GitHub Release
+    needs: generate-changelog
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download release body
+      uses: actions/download-artifact@v4
+      with:
+        name: release-body
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        body_file: release-body.md
+        draft: false
+        prerelease: false
+        make_latest: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-release-assets:
+    name: Build Release Assets
+    needs: create-release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake g++ make libgl1-mesa-dev zip
+
+    - name: Build addon
+      run: |
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        make -j$(nproc)
+
+    - name: Package addon
+      run: |
+        cd build
+        # Create a zip file of the addon
+        VERSION=${GITHUB_REF#refs/tags/v}
+        zip -r visualization.matrix-$VERSION.zip visualization.matrix/
+
+    - name: Upload release asset
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/visualization.matrix-*.zip
+        tag_name: ${{ github.ref }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

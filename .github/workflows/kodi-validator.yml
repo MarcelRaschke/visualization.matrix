@@ -1,0 +1,167 @@
+name: Kodi Addon Validator
+
+on:
+  push:
+    branches: [ master, Matrix, Nexus ]
+    paths:
+      - 'addon.xml'
+      - 'addon.xml.in'
+      - 'visualization.matrix/**'
+      - 'src/**'
+      - 'lib/**'
+  pull_request:
+    branches: [ master, Matrix, Nexus ]
+    paths:
+      - 'addon.xml'
+      - 'addon.xml.in'
+      - 'visualization.matrix/**'
+      - 'src/**'
+      - 'lib/**'
+
+jobs:
+  validate-addon-xml:
+    name: Validate Addon XML
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Validate addon.xml structure
+      run: |
+        # Check if addon.xml exists or needs to be generated
+        if [ -f "addon.xml" ]; then
+          echo "Validating existing addon.xml"
+          # Check for required fields
+          if ! grep -q 'id="visualization.matrix"' addon.xml; then
+            echo "::error::Missing or incorrect addon id"
+            exit 1
+          fi
+          if ! grep -q 'version="' addon.xml; then
+            echo "::error::Missing version field"
+            exit 1
+          fi
+          if ! grep -q 'name="' addon.xml; then
+            echo "::error::Missing name field"
+            exit 1
+          fi
+          if ! grep -q 'provider="' addon.xml; then
+            echo "::error::Missing provider field"
+            exit 1
+          fi
+          
+          # Validate version format (X.Y.Z)
+          VERSION=$(grep -oP 'version="\K[^"]+' addon.xml)
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version $VERSION does not match semantic versioning (X.Y.Z)"
+            exit 1
+          fi
+          
+          echo "✅ addon.xml is valid"
+        elif [ -f "addon.xml.in" ]; then
+          echo "Validating addon.xml.in"
+          # Check for required fields in template
+          if ! grep -q 'id="visualization.matrix"' addon.xml.in; then
+            echo "::error::Missing or incorrect addon id in addon.xml.in"
+            exit 1
+          fi
+          if ! grep -q '@PROJECT_VERSION@' addon.xml.in; then
+            echo "::error::Missing version placeholder in addon.xml.in"
+            exit 1
+          fi
+          echo "✅ addon.xml.in is valid"
+        else
+          echo "::error::No addon.xml or addon.xml.in found"
+          exit 1
+        fi
+
+  validate-kodi-requirements:
+    name: Validate Kodi Requirements
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Check for required Kodi includes
+      run: |
+        REQUIRED_INCLUDES=(
+          "kodi/addon-instance/Visualization.h"
+          "kodi/General.h"
+          "kodi/gui/gl/GL.h"
+        )
+        
+        MISSING=0
+        for include in "${REQUIRED_INCLUDES[@]}"; do
+          if ! grep -r "#include.*$include" src/ lib/ visualization.matrix/ 2>/dev/null; then
+            echo "::warning::Recommended Kodi include not found: $include"
+            MISSING=$((MISSING + 1))
+          fi
+        done
+        
+        if [ $MISSING -gt 0 ]; then
+          echo "::warning::$MISSING recommended Kodi includes are missing"
+        fi
+
+    - name: Check for required visualization methods
+      run: |
+        REQUIRED_METHODS=(
+          "Create"
+          "Start"
+          "Stop"
+          "Render"
+          "AudioData"
+        )
+        
+        MISSING=0
+        for method in "${REQUIRED_METHODS[@]}"; do
+          if ! grep -r "$method" src/ visualization.matrix/ 2>/dev/null; then
+            echo "::error::Required visualization method not found: $method"
+            MISSING=$((MISSING + 1))
+          fi
+        done
+        
+        if [ $MISSING -gt 0 ]; then
+          echo "::error::$MISSING required visualization methods are missing"
+          exit 1
+        fi
+        
+        echo "✅ All required visualization methods are present"
+
+    - name: Check OpenGL/ES compatibility
+      run: |
+        if ! grep -r "gl\|GL_\|GLuint\|GLfloat" src/ lib/ visualization.matrix/ 2>/dev/null; then
+          echo "::warning::No OpenGL usage detected - is this a visualization addon?"
+        else
+          echo "✅ OpenGL usage detected"
+        fi
+        
+        if grep -r "GLES\|OPENGLES" src/ lib/ visualization.matrix/ 2>/dev/null; then
+          echo "✅ OpenGL ES compatibility detected"
+        fi
+
+  validate-fft-usage:
+    name: Validate FFT Usage
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Check kissfft usage
+      run: |
+        if grep -r "kiss_fft\|kiss_fftr" src/ lib/ 2>/dev/null; then
+          echo "✅ FFT library (kissfft) detected"
+          
+          # Check for FFT size validation
+          if ! grep -r "power.*2\|nfft.*2" src/ 2>/dev/null; then
+            echo "::warning::Consider validating FFT size is a power of 2"
+          fi
+          
+          # Check for input validation
+          if ! grep -r "isfinite\|std::isnan\|std::isinf" src/ 2>/dev/null; then
+            echo "::warning::Consider adding NaN/Inf validation for FFT input"
+          fi
+        else
+          echo "::warning::No FFT library usage detected"
+        fi

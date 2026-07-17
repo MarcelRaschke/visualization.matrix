@@ -1,0 +1,52 @@
+# Development Dockerfile for visualization.matrix
+# Based on Ubuntu 22.04 with all build dependencies
+
+FROM ubuntu:22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    # Build tools
+    cmake \
+    g++ \
+    make \
+    git \
+    ninja-build \
+    # Graphics
+    libgl1-mesa-dev \
+    libglu1-mesa-dev \
+    libx11-dev \
+    libxrandr-dev \
+    libxinerama-dev \
+    libxcursor-dev \
+    libxi-dev \
+    # Code analysis tools
+    clang \
+    lld \
+    clang-tidy-14 \
+    cppcheck \
+    valgrind \
+    # Utilities
+    curl \
+    wget \
+    unzip \
+    zip \
+    jq \
+    # Cleanup
+    && rm -rf /var/lib/apt/lists/*
+
+# Clone Kodi source (required for building addons)
+RUN git clone --depth=1 --branch Matrix https://github.com/xbmc/xbmc.git /kodi
+
+# Set working directory
+WORKDIR /workspace
+
+# Copy source code
+COPY . .
+
+# Default command
+CMD ["/bin/bash"]

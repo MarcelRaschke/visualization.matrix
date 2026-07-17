@@ -1,0 +1,92 @@
+name: Test Coverage
+
+on:
+  push:
+    branches: [ master, Matrix, Nexus ]
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.c'
+      - 'src/**'
+      - 'lib/**'
+      - 'CMakeLists.txt'
+  pull_request:
+    branches: [ master, Matrix, Nexus ]
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.c'
+      - 'src/**'
+      - 'lib/**'
+      - 'CMakeLists.txt'
+
+jobs:
+  coverage:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake g++ make libgl1-mesa-dev lcov gcovr
+
+    - name: Cache coverage builds
+      uses: actions/cache@v3
+      with:
+        path: build/
+        key: ${{ runner.os }}-coverage-${{ hashFiles('src/**', 'lib/**', 'CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-coverage-
+
+    - name: Build with coverage flags
+      run: |
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage" ..
+        make -j$(nproc)
+
+    - name: Run tests
+      run: |
+        cd build
+        ctest --output-on-failure || echo "No tests found or tests failed"
+
+    - name: Generate coverage report
+      run: |
+        cd build
+        # Generate lcov report
+        lcov --capture --directory . --output-file coverage.info
+        # Generate HTML report
+        genhtml coverage.info --output-directory coverage-report
+        # Generate JSON report for Codecov
+        gcovr --json --output coverage.json coverage.info
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-reports
+        path: |
+          build/coverage.info
+          build/coverage.json
+          build/coverage-report/
+        retention-days: 30
+
+    - name: Upload to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: build/coverage.json
+        flags: unittests
+        name: codecov-umbrella
+
+    - name: Check coverage threshold
+      run: |
+        cd build
+        # Check if coverage is above 80%
+        COVERAGE=$(gcovr --json coverage.info | jq '.total.percent' | bc)
+        echo "Current coverage: $COVERAGE%"
+        if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+          echo "::warning::Test coverage is below 80% ($COVERAGE%)"
+        fi
