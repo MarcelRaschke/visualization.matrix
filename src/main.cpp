@@ -411,8 +411,14 @@ void CVisualizationMatrix::RenderTo(GLuint shader, GLuint effect_fb)
         }
         if (m_AlbumNeedsUpload)
         {
-          glUniform3f(m_attrAlbumPositionLoc, m_albumX, m_albumY, 2.0f);//FIXME: proper framing, the album can reach over the edge of the screen
-          m_AlbumNeedsUpload = true;//FIXME: limit upload to the actual album shader
+          // Clamp album position to prevent it from reaching over the edge of the screen
+          // The shader (album.frag.glsl) uses: vec2 albumcoords = uv*iAlbumPosition.z + iAlbumPosition.xy;
+          // To ensure the album stays within visible bounds, limit m_albumX and m_albumY to [-0.5, 0.5]
+          const float kAlbumPosClamp = 0.5f;
+          GLfloat clampedX = std::max(-kAlbumPosClamp, std::min(m_albumX, kAlbumPosClamp));
+          GLfloat clampedY = std::max(-kAlbumPosClamp, std::min(m_albumY, kAlbumPosClamp));
+          glUniform3f(m_attrAlbumPositionLoc, clampedX, clampedY, 2.0f);
+          m_AlbumNeedsUpload = false; // Reset after upload (only for album shader)
         }
       }
     }
@@ -497,6 +503,9 @@ void CVisualizationMatrix::Launch(int preset)
   kodi::Log(ADDON_LOG_DEBUG, "bits of precision: %d", m_bitsPrecision);
 
   UnloadTextures();
+
+  // Reset album upload flag - only set to true for album shader
+  m_AlbumNeedsUpload = (g_presets[preset].channel[3] == 2);
 
   m_usedShaderFile = kodi::GetAddonPath("resources/shaders/" + g_presets[preset].file);
   for (int i = 0; i < 4; i++)
