@@ -411,8 +411,11 @@ void CVisualizationMatrix::RenderTo(GLuint shader, GLuint effect_fb)
         }
         if (m_AlbumNeedsUpload)
         {
-          glUniform3f(m_attrAlbumPositionLoc, m_albumX, m_albumY, 2.0f);//FIXME: proper framing, the album can reach over the edge of the screen
-          m_AlbumNeedsUpload = true;//FIXME: limit upload to the actual album shader
+          // Clamp album position to ensure it stays within screen bounds [-1.0, 1.0]
+          m_albumX = std::max(-1.0f, std::min(1.0f, m_albumX));
+          m_albumY = std::max(-1.0f, std::min(1.0f, m_albumY));
+          glUniform3f(m_attrAlbumPositionLoc, m_albumX, m_albumY, 2.0f);
+          m_AlbumNeedsUpload = false;
         }
       }
     }
