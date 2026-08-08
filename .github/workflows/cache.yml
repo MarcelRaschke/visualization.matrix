@@ -21,6 +21,9 @@ jobs:
   cleanup-cache:
     name: Cleanup Cache
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
 
     steps:
     - name: Checkout repository
@@ -56,6 +59,8 @@ jobs:
     name: Prewarm Cache
     runs-on: ubuntu-latest
     needs: cleanup-cache
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout repository

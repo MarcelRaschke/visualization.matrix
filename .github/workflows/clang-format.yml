@@ -19,6 +19,8 @@ jobs:
   clang-format-check:
     name: clang-format Check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
     - name: Checkout repository
@@ -45,6 +47,8 @@ jobs:
     name: clang-format Apply
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout repository
