@@ -413,13 +413,6 @@ void CVisualizationMatrix::RenderTo(GLuint shader, GLuint effect_fb)
         }
         if (m_AlbumNeedsUpload)
         {
-<<<<<<< HEAD
-          // Clamp album position to ensure it stays within screen bounds [-1.0, 1.0]
-          m_albumX = std::max(-1.0f, std::min(1.0f, m_albumX));
-          m_albumY = std::max(-1.0f, std::min(1.0f, m_albumY));
-          glUniform3f(m_attrAlbumPositionLoc, m_albumX, m_albumY, 2.0f);
-          m_AlbumNeedsUpload = false;
-=======
           // Clamp album position to prevent it from reaching over the edge of the screen
           // The shader (album.frag.glsl) uses: vec2 albumcoords = uv*iAlbumPosition.z + iAlbumPosition.xy;
           // To ensure the album stays within visible bounds, limit m_albumX and m_albumY to [-0.5, 0.5]
@@ -428,7 +421,6 @@ void CVisualizationMatrix::RenderTo(GLuint shader, GLuint effect_fb)
           GLfloat clampedY = std::max(-kAlbumPosClamp, std::min(m_albumY, kAlbumPosClamp));
           glUniform3f(m_attrAlbumPositionLoc, clampedX, clampedY, 2.0f);
           m_AlbumNeedsUpload = false; // Reset after upload (only for album shader)
->>>>>>> 97df457a27b9ecec271605cb162d5d29dd4b1be0
         }
       }
     }
