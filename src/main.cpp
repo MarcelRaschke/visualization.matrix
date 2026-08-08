@@ -502,6 +502,9 @@ void CVisualizationMatrix::Launch(int preset)
 
   UnloadTextures();
 
+  // Reset album upload flag - only set to true for album shader
+  m_AlbumNeedsUpload = (g_presets[preset].channel[3] == 2);
+
   m_usedShaderFile = kodi::GetAddonPath("resources/shaders/" + g_presets[preset].file);
   for (int i = 0; i < 4; i++)
   {
