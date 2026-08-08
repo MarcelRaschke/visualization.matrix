@@ -165,7 +165,7 @@ CVisualizationMatrix::CVisualizationMatrix()
   m_dotColor.green = static_cast<float>(kodi::GetSettingInt("green")) / 255.0f;
   m_dotColor.blue = static_cast<float>(kodi::GetSettingInt("blue")) / 255.0f;
   m_lowpower = kodi::GetSettingBoolean("lowpower");
-  m_noiseFluctuation = m_lowpower ? (static_cast<float>(kodi::GetSettingInt("noisefluctuation")) * 0.0002f)/m_fallSpeed * 0.25f 
+  m_noiseFluctuation = m_lowpower ? (static_cast<float>(kodi::GetSettingInt("noisefluctuation")) * 0.0002f)/m_fallSpeed * 0.25f
                                   : (static_cast<float>(kodi::GetSettingInt("noisefluctuation")) * 0.0004f)/m_fallSpeed * 0.25f;
   m_crtCurve = kodi::GetSettingBoolean("crtcurve");
   m_lastAlbumChange = 0.0;
@@ -661,7 +661,7 @@ GLuint CVisualizationMatrix::CreateTexture(const std::string& file, GLint intern
     return 0;
   }
 
-  const GLuint texture = CreateTexture(image, GL_RGBA, static_cast<unsigned int>(width), 
+  const GLuint texture = CreateTexture(image, GL_RGBA, static_cast<unsigned int>(width),
                                        static_cast<unsigned int>(height), internalFormat, scaling, repeat);
   stbi_image_free(image);
   image = nullptr;
@@ -680,7 +680,7 @@ float CVisualizationMatrix::BlackmanWindow(float in, size_t i, size_t length)
   return in * static_cast<float>(a0 - a1 * std::cos(2.0 * M_PI * x) + a2 * std::cos(4.0 * M_PI * x));
 }
 
-void CVisualizationMatrix::SmoothingOverTime(std::vector<float>& outputBuffer, const std::vector<float>& lastOutputBuffer, 
+void CVisualizationMatrix::SmoothingOverTime(std::vector<float>& outputBuffer, const std::vector<float>& lastOutputBuffer,
                                            kiss_fft_cpx* inputBuffer, size_t length, float smoothingTimeConstant, unsigned int fftSize)
 {
   for (size_t i = 0; i < length; i++)
@@ -753,7 +753,7 @@ void CVisualizationMatrix::GatherDefines()
   m_defines += "const float cNoiseFluctuation = " + std::to_string(m_noiseFluctuation) + ";\n";
   m_defines += "const float cDistortThreshold = " + std::to_string(m_distortThreshold) + ";\n";
   m_defines += "const float cRainHighlights = " + std::to_string(m_rainHighlights) + ";\n";
-  m_defines += "const vec3 cColor = vec3(" + std::to_string(m_dotColor.red) + "," + 
+  m_defines += "const vec3 cColor = vec3(" + std::to_string(m_dotColor.red) + "," +
                std::to_string(m_dotColor.green) + "," + std::to_string(m_dotColor.blue) + ");\n";
 
   if (m_state.fbwidth && m_state.fbheight)

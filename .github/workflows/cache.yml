@@ -21,7 +21,7 @@ jobs:
   cleanup-cache:
     name: Cleanup Cache
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

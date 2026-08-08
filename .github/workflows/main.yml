@@ -122,9 +122,8 @@ jobs:
         severity: 'CRITICAL,HIGH,MEDIUM'
 
     - name: Upload Trivy SARIF
-      if: matrix.tool == 'trivy'
       uses: github/codeql-action/upload-sarif@v3
-      if: always()
+      if: always() && matrix.tool == 'trivy'
       with:
         sarif_file: 'trivy-results.sarif'
 

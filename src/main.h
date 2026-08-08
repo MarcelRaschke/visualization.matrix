@@ -57,7 +57,7 @@ private:
   GLuint CreateTexture(const GLvoid* data, GLint format, unsigned int w, unsigned int h, GLint internalFormat, GLint scaling, GLint repeat);
   GLuint CreateTexture(const std::string& file, GLint internalFormat, GLint scaling, GLint repeat);
   float BlackmanWindow(float in, size_t i, size_t length);
-  void SmoothingOverTime(std::vector<float>& outputBuffer, const std::vector<float>& lastOutputBuffer, 
+  void SmoothingOverTime(std::vector<float>& outputBuffer, const std::vector<float>& lastOutputBuffer,
                          kiss_fft_cpx* inputBuffer, size_t length, float smoothingTimeConstant, unsigned int fftSize);
   float LinearToDecibels(float linear);
   int DetermineBitsPrecision();
