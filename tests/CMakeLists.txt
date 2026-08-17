@@ -1,34 +1,30 @@
-cmake_minimum_required(VERSION 3.10)
-project(visualization.matrix.tests)
+# Tests for visualization.matrix
+#
+# Included via add_subdirectory(tests) from the top-level CMakeLists.txt when
+# BUILD_TESTING=ON. GoogleTest is fetched on demand via FetchContent so the
+# tests do not depend on a system-provided GTest package.
 
-# Enable C++17
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Find GoogleTest
-find_package(GTest REQUIRED)
-find_package(GTestMain REQUIRED)
-
-# Include parent project for dependencies
-include_directories(
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/lib/kissfft
+# Fetch GoogleTest only when actually building tests (keeps regular builds lean).
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz
 )
+# On Windows / MSVC prevent gtest from overriding the parent project's settings.
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-# Add test executable
 add_executable(test_visualization_matrix
-    test_visualization_matrix.cpp
+  test_visualization_matrix.cpp
 )
 
-# Link GoogleTest and required libraries
-target_link_libraries(test_visualization_matrix
-    GTest::GTest
-    GTest::Main
-    m  # For math functions (log10f, sin, cos, etc.)
+target_link_libraries(test_visualization_matrix PRIVATE
+  GTest::gtest
+  GTest::gtest_main
+  m  # math: log10f, cos, sqrt, ...
 )
 
-# Enable testing
-enable_testing()
-
-# Add test to CTest
+# Register the test with CTest. Using the explicit add_test() form (rather than
+# gtest_discover_tests) keeps registration reliable without a build-time
+# discovery step, matching the original project layout.
 add_test(NAME test_visualization_matrix COMMAND test_visualization_matrix)

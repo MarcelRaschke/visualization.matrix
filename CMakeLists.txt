@@ -22,6 +22,8 @@ option(BUILD_TESTING "Build tests" OFF)
 option(ENABLE_COVERAGE "Enable code coverage" OFF)
 option(ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
 option(ENABLE_CPPCHECK "Enable cppcheck" OFF)
+option(ENABLE_TRACY "Enable Tracy profiler instrumentation (requires tracy headers when enabled)" OFF)
+option(TRACY_ON_DEMAND "Only collect Tracy zones when a profiler is attached" ON)
 
 # Fetch kissfft dependency
 include(FetchContent)
@@ -73,6 +75,7 @@ set(MATRIX_SOURCES
 
 set(MATRIX_HEADERS
   src/main.h
+  src/tracyprofiler.h
   src/stb_image.h
   ${kissfft_SOURCE_DIR}/kiss_fft.h
   ${kissfft_SOURCE_DIR}/kiss_fft_log.h
@@ -120,21 +123,74 @@ set(CPACK_PACKAGE_VENDOR ${PROJECT_AUTHOR})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
 set(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/LICENSE.md)
 
-# Enable testing if requested
+# Code coverage (gcov/lcov)
+#
+# Build with: cmake -DBUILD_TESTING=ON -DENABLE_COVERAGE=ON ..
+# Run tests, then: lcov --capture --directory . --output-file coverage.info
+#                  genhtml coverage.info --output-directory coverage-html
+#
+# Configured before the test subdirectory so the test target inherits the
+# coverage compile/link flags too.
+if(ENABLE_COVERAGE)
+  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    message(FATAL_ERROR "ENABLE_COVERAGE requires GCC or Clang")
+  endif()
+  add_compile_options(--coverage -O0 -g)
+  add_link_options(--coverage)
+endif()
+
+# Static analysis integration
+#
+# Clang-Tidy: enabled with -DENABLE_CLANG_TIDY=ON (Clang toolchain recommended).
+#   Runs as part of the build; failures (treated as errors) break the build.
+# Cppcheck:   enabled with -DENABLE_CPPCHECK=ON. Runs as a build hook on the
+#   main target's sources; non-zero exit fails the build.
+if(ENABLE_CLANG_TIDY)
+  find_program(CLANG_TIDY_BIN NAMES clang-tidy clang-tidy-14 clang-tidy-15 clang-tidy-16)
+  if(CLANG_TIDY_BIN)
+    set(CMAKE_CXX_CLANG_TIDY
+      "${CLANG_TIDY_BIN};-checks=*,-modernize-use-trailing-return-type;-warnings-as-errors=*;-quiet")
+    message(STATUS "clang-tidy enabled: ${CLANG_TIDY_BIN}")
+  else()
+    message(WARNING "ENABLE_CLANG_TIDY=ON but clang-tidy not found; skipping.")
+  endif()
+endif()
+
+if(ENABLE_CPPCHECK)
+  find_program(CPPCHECK_BIN NAMES cppcheck)
+  if(CPPCHECK_BIN)
+    set(CMAKE_CXX_CPPCHECK
+      "${CPPCHECK_BIN};--enable=warning,style;--inconclusive;--std=c++17;--suppress=missingIncludeSystem;--error-exitcode=1")
+    message(STATUS "cppcheck enabled: ${CPPCHECK_BIN}")
+  else()
+    message(WARNING "ENABLE_CPPCHECK=ON but cppcheck not found; skipping.")
+  endif()
+endif()
+
+# Tracy profiler integration (optional).
+#
+# When ENABLE_TRACY is ON and the tracy headers are available (TracyClient.cpp
+# is expected to be compiled by the consuming project or via FetchContent), the
+# addon is instrumented with zone scopes. When the headers are absent, the
+# include is skipped and profiling is a no-op, so enabling the option is safe
+# even without tracy installed.
+if(ENABLE_TRACY)
+  find_path(TRACY_INCLUDE_DIR NAMES tracy/Tracy.hpp)
+  if(TRACY_INCLUDE_DIR)
+    target_compile_definitions(visualization.matrix PRIVATE TRACY_ENABLE)
+    if(TRACY_ON_DEMAND)
+      target_compile_definitions(visualization.matrix PRIVATE TRACY_ON_DEMAND)
+    endif()
+    target_include_directories(visualization.matrix PRIVATE ${TRACY_INCLUDE_DIR})
+    message(STATUS "Tracy profiler enabled (include: ${TRACY_INCLUDE_DIR})")
+  else()
+    message(STATUS "ENABLE_TRACY=ON but tracy headers not found; instrumentation disabled.")
+  endif()
+endif()
+
+# Enable testing if requested. Done after coverage/analysis setup so the test
+# target inherits the same compile/link flags (e.g. --coverage).
 if(BUILD_TESTING)
   enable_testing()
-  # Add tests here when available
-endif()
-
-# Code coverage
-if(ENABLE_COVERAGE)
-  target_compile_options(visualization.matrix PRIVATE --coverage)
-  target_link_options(visualization.matrix PRIVATE --coverage)
-endif()
-
-# Clang-tidy integration
-if(ENABLE_CLANG_TIDY AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set_target_properties(visualization.matrix PROPERTIES
-    CXX_CLANG_TIDY "clang-tidy;-checks=*;-warnings-as-errors=*"
-  )
+  add_subdirectory(tests)
 endif()
