@@ -1,0 +1,125 @@
+{
+  "categories": [
+    {
+      "id": "cat-fundamentals",
+      "name": "Grundlagen",
+      "description": "Kernelemente maschinellen Lernens und KI."
+    },
+    {
+      "id": "cat-ethics",
+      "name": "Ethik & Gesellschaft",
+      "description": "Verantwortungsvoller Umgang mit KI-Systemen."
+    },
+    {
+      "id": "cat-applications",
+      "name": "Anwendungen",
+      "description": "Praxisfelder und konkrete Anwendungsfälle."
+    }
+  ],
+  "topics": [
+    {
+      "id": "topic-supervised",
+      "name": "Überwachtes Lernen",
+      "description": "Modelle lernen aus gelabelten Daten, Vorhersagen zu treffen.",
+      "categoryId": "cat-fundamentals",
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Regression vs. Klassifikation",
+          "summary": "Wann vorherzusagende Werte kontinuierlich oder diskret sind.",
+          "topicId": "topic-supervised",
+          "popularity": 95,
+          "createdAt": "2024-01-12T09:00:00Z"
+        },
+        {
+          "id": "lesson-2",
+          "title": "Train-/Test-Split",
+          "summary": "Warum Daten vor der Bewertung getrennt werden müssen.",
+          "topicId": "topic-supervised",
+          "popularity": 80,
+          "createdAt": "2024-03-02T10:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-unsupervised",
+      "name": "Unüberwachtes Lernen",
+      "description": "Strukturen in ungelabelten Daten entdecken, z. B. Clustering.",
+      "categoryId": "cat-fundamentals",
+      "lessons": [
+        {
+          "id": "lesson-3",
+          "title": "K-Means in der Praxis",
+          "summary": "Iterative Clusterzuordnung und ihre Grenzen.",
+          "topicId": "topic-unsupervised",
+          "popularity": 70,
+          "createdAt": "2024-04-18T14:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-bias",
+      "name": "Bias & Fairness",
+      "description": "Verzerrungen in Daten und Modellen erkennen und abschwächen.",
+      "categoryId": "cat-ethics",
+      "lessons": [
+        {
+          "id": "lesson-4",
+          "title": "Messung von Fairness-Metriken",
+          "summary": "Demographic Parity, Equalized Odds und ihre Kompromisse.",
+          "topicId": "topic-bias",
+          "popularity": 88,
+          "createdAt": "2024-05-20T08:15:00Z"
+        },
+        {
+          "id": "lesson-5",
+          "title": "Ursachen von Daten-Bias",
+          "summary": "Sampling-, Labeling- und historische Verzerrungen.",
+          "topicId": "topic-bias",
+          "popularity": 60,
+          "createdAt": "2024-06-01T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-llms",
+      "name": "Sprachmodelle (LLMs)",
+      "description": "Große Sprachmodelle, Prompting und ihre Anwendungsfelder.",
+      "categoryId": "cat-applications",
+      "lessons": [
+        {
+          "id": "lesson-6",
+          "title": "Prompt-Strategien",
+          "summary": "Few-Shot, Chain-of-Thought und Rollen-Prompts.",
+          "topicId": "topic-llms",
+          "popularity": 99,
+          "createdAt": "2024-07-10T16:45:00Z"
+        },
+        {
+          "id": "lesson-7",
+          "title": "Halluzinationen erkennen",
+          "summary": "Warum LLMs plausibel klingende Falschaussagen erzeugen.",
+          "topicId": "topic-llms",
+          "popularity": 92,
+          "createdAt": "2024-08-05T11:20:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-vision",
+      "name": "Bilderkennung",
+      "description": "Computer-Vision-Modelle für Klassifikation und Detektion.",
+      "categoryId": "cat-applications",
+      "lessons": [
+        {
+          "id": "lesson-8",
+          "title": "CNN-Grundlagen",
+          "summary": "Faltungen, Pooling und Feature-Hierarchien.",
+          "topicId": "topic-vision",
+          "popularity": 75,
+          "createdAt": "2024-09-01T09:30:00Z"
+        }
+      ]
+    }
+  ]
+}
