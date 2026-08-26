@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { LessonsTab } from './components/LessonsTab';
 import { TopicModal } from './components/TopicModal';
 import { useTopics } from './hooks/useTopics';
+import { useHypothesesStorage } from './hooks/useLocalStorage';
 import {
   HYPOTHESIS_STATUSES,
   HYPOTHESIS_STATUS_LABELS,
@@ -28,8 +29,8 @@ export default function App() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [modalTopicId, setModalTopicId] = useState<string | null>(null);
 
-  // Hypothesis state + form state
-  const [hypotheses, setHypotheses] = useState<Hypothesis[]>([
+  // Hypothesis state + form state with localStorage persistence
+  const [hypotheses, setHypotheses] = useHypothesesStorage([
     {
       id: 'seed-1',
       title: 'Few-Shot-Prompts verbessern LLM-Antworten',
@@ -45,6 +46,13 @@ export default function App() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [topic, setTopic] = useState<string>(topics[0]?.id ?? '');
+
+  // Initialize topic state when topics load
+  useEffect(() => {
+    if (topics.length > 0 && !topic) {
+      setTopic(topics[0].id);
+    }
+  }, [topics, topic]);
 
   const modalTopic = modalTopicId ? getTopic(modalTopicId) ?? null : null;
   const modalCategory = modalTopic ? getCategory(modalTopic.categoryId) ?? null : null;
@@ -76,6 +84,12 @@ export default function App() {
     );
   }
 
+  function handleDelete(id: string) {
+    if (window.confirm('Möchten Sie diese Hypothese wirklich löschen?')) {
+      setHypotheses((prev) => prev.filter((h) => h.id !== id));
+    }
+  }
+
   // Selecting a topic in the sidebar opens the modal.
   function handleSelectTopic(topicId: string) {
     setSelectedTopicId(topicId);
@@ -83,9 +97,9 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen w-full flex-col bg-slate-100 text-slate-900">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
-        <h1 className="text-lg font-semibold">KI Hypothesen Test</h1>
+    <div className="flex h-screen w-full flex-col bg-slate-50 text-secondary-900">
+      <header className="flex items-center justify-between border-b border-secondary-200 bg-white px-6 py-3 shadow-soft">
+        <h1 className="text-lg font-semibold text-primary-700">KI Hypothesen Test</h1>
         <nav className="flex gap-1 rounded-lg bg-slate-100 p-1">
           <TabButton active={tab === 'hypotheses'} onClick={() => setTab('hypotheses')}>
             Hypothesen
@@ -116,10 +130,11 @@ export default function App() {
               onFilterTopic={setFilterTopic}
               getTopic={getTopic}
               onStatusChange={handleStatusChange}
+              onDelete={handleDelete}
               onSubmit={handleSubmit}
               title={title}
               description={description}
-              topic={topic}
+              selectedTopic={topic}
               onTitle={setTitle}
               onDescription={setDescription}
               onTopic={setTopic}
@@ -157,10 +172,10 @@ function TabButton({ active, onClick, children }: TabButtonProps) {
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+      className={`rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
         active
-          ? 'bg-white text-slate-900 shadow-sm'
-          : 'text-slate-600 hover:text-slate-900'
+          ? 'bg-white text-primary-700 shadow-soft'
+          : 'text-secondary-600 hover:bg-white/50 hover:text-primary-700'
       }`}
     >
       {children}
@@ -175,10 +190,11 @@ interface HypothesesPanelProps {
   onFilterTopic: (topicId: string) => void;
   getTopic: (id: string) => { name: string } | undefined;
   onStatusChange: (id: string, status: HypothesisStatus) => void;
+  onDelete: (id: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   title: string;
   description: string;
-  topic: string;
+  selectedTopic: string;
   onTitle: (v: string) => void;
   onDescription: (v: string) => void;
   onTopic: (v: string) => void;
@@ -191,10 +207,11 @@ function HypothesesPanel({
   onFilterTopic,
   getTopic,
   onStatusChange,
+  onDelete,
   onSubmit,
   title,
   description,
-  topic,
+  selectedTopic,
   onTitle,
   onDescription,
   onTopic,
@@ -203,43 +220,43 @@ function HypothesesPanel({
     <div className="space-y-6">
       <form
         onSubmit={onSubmit}
-        className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+        className="card card-hover"
       >
-        <h2 className="mb-3 text-base font-semibold">Neue Hypothese</h2>
+        <h2 className="mb-3 text-base font-semibold text-primary-700">Neue Hypothese</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="sm:col-span-2">
-            <span className="mb-1 block text-xs font-medium text-slate-600">
+            <span className="mb-1 block text-xs font-medium text-secondary-600">
               Titel
             </span>
             <input
               value={title}
               onChange={(e) => onTitle(e.target.value)}
               required
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="input-field"
               placeholder="z. B. Mehr Daten verbessern die Genauigkeit"
             />
           </label>
           <label className="sm:col-span-2">
-            <span className="mb-1 block text-xs font-medium text-slate-600">
+            <span className="mb-1 block text-xs font-medium text-secondary-600">
               Beschreibung
             </span>
             <textarea
               value={description}
               onChange={(e) => onDescription(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="input-field"
               placeholder="Kurze Erläuterung der Hypothese"
             />
           </label>
           <label className="sm:col-span-2">
-            <span className="mb-1 block text-xs font-medium text-slate-600">
+            <span className="mb-1 block text-xs font-medium text-secondary-600">
               Thema
             </span>
             <select
-              value={topic}
+              value={selectedTopic}
               onChange={(e) => onTopic(e.target.value)}
               required
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="input-field"
             >
               {topics.map((t) => (
                 <option key={t.id} value={t.id}>
@@ -251,21 +268,23 @@ function HypothesesPanel({
         </div>
         <button
           type="submit"
-          className="mt-3 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="btn-primary mt-3"
         >
           Hinzufügen
         </button>
       </form>
 
       <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-semibold">Hypothesen ({hypotheses.length})</h2>
-          <label className="flex items-center gap-2 text-xs text-slate-600">
+        <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <h2 className="text-base font-semibold text-secondary-900">
+            Hypothesen ({hypotheses.length})
+          </h2>
+          <label className="flex items-center gap-2 text-xs text-secondary-600">
             Filter:
             <select
               value={filterTopic}
               onChange={(e) => onFilterTopic(e.target.value)}
-              className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="input-field text-xs"
             >
               <option value="all">Alle Themen</option>
               {topics.map((t) => (
@@ -278,52 +297,65 @@ function HypothesesPanel({
         </div>
 
         {hypotheses.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
+          <p className="card text-center text-sm text-secondary-500">
             Keine Hypothesen für diesen Filter vorhanden.
           </p>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-xl border border-secondary-200 bg-white shadow-soft">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+              <thead className="bg-secondary-50 text-left text-xs uppercase tracking-wide text-secondary-500">
                 <tr>
-                  <th className="px-4 py-2">Titel</th>
-                  <th className="px-4 py-2">Thema</th>
-                  <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Erstellt</th>
+                  <th className="px-4 py-3">Titel</th>
+                  <th className="px-4 py-3">Thema</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Erstellt</th>
+                  <th className="px-4 py-3">Aktionen</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {hypotheses.map((h) => (
-                  <tr key={h.id}>
-                    <td className="px-4 py-2">
-                      <p className="font-medium text-slate-900">{h.title}</p>
-                      {h.description && (
-                        <p className="text-xs text-slate-500">{h.description}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-slate-700">
-                      {getTopic(h.topic)?.name ?? h.topic}
-                    </td>
-                    <td className="px-4 py-2">
-                      <select
-                        value={h.status}
-                        onChange={(e) =>
-                          onStatusChange(h.id, e.target.value as HypothesisStatus)
-                        }
-                        className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                      >
-                        {HYPOTHESIS_STATUSES.map((s) => (
-                          <option key={s} value={s}>
-                            {HYPOTHESIS_STATUS_LABELS[s]}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-4 py-2 text-xs text-slate-500">
-                      {new Date(h.createdAt).toLocaleString('de-DE')}
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-secondary-100">
+                {hypotheses.map((h) => {
+                  const topicName = getTopic(h.topic)?.name ?? h.topic;
+                  return (
+                    <tr key={h.id} className="animate-fade-in">
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-secondary-900">{h.title}</p>
+                        {h.description && (
+                          <p className="text-xs text-secondary-500">{h.description}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-secondary-700">
+                        <span className="badge badge-secondary">{topicName}</span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <select
+                          value={h.status}
+                          onChange={(e) =>
+                            onStatusChange(h.id, e.target.value as HypothesisStatus)
+                          }
+                          className="rounded-md border border-secondary-300 bg-white px-2 py-1 text-xs focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                        >
+                          {HYPOTHESIS_STATUSES.map((s) => (
+                            <option key={s} value={s}>
+                              {HYPOTHESIS_STATUS_LABELS[s]}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-secondary-500">
+                        {new Date(h.createdAt).toLocaleString('de-DE')}
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => onDelete(h.id)}
+                          className="rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+                          title="Löschen"
+                        >
+                          Löschen
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
