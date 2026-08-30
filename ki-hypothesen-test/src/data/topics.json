@@ -3,30 +3,45 @@
     {
       "id": "cat-fundamentals",
       "name": "Grundlagen",
-      "description": "Kernelemente maschinellen Lernens und KI."
+      "description": "Kernelemente maschinellen Lernens und KI. Grundbegriffe, Algorithmen und mathematische Grundlagen."
     },
     {
       "id": "cat-ethics",
       "name": "Ethik & Gesellschaft",
-      "description": "Verantwortungsvoller Umgang mit KI-Systemen."
+      "description": "Verantwortungsvoller Umgang mit KI-Systemen. Ethische Implikationen, Regulierung und gesellschaftliche Auswirkungen."
     },
     {
       "id": "cat-applications",
       "name": "Anwendungen",
-      "description": "Praxisfelder und konkrete Anwendungsfälle."
+      "description": "Praxisfelder und konkrete Anwendungsfälle. Von Chatbots bis zu autonomen Systemen."
+    },
+    {
+      "id": "cat-architectures",
+      "name": "Modellarchitekturen",
+      "description": "Neuronale Netzwerkarchitekturen und ihre Spezialisierungen für verschiedene Aufgaben."
+    },
+    {
+      "id": "cat-data",
+      "name": "Datenverarbeitung",
+      "description": "Datenpipelines, Feature-Engineering und Qualitätsmanagement für KI-Projekte."
+    },
+    {
+      "id": "cat-future",
+      "name": "Zukunft & Forschung",
+      "description": "Aktuelle Forschungstrends, aufstrebende Technologien und die Zukunft der KI."
     }
   ],
   "topics": [
     {
       "id": "topic-supervised",
       "name": "Überwachtes Lernen",
-      "description": "Modelle lernen aus gelabelten Daten, Vorhersagen zu treffen.",
+      "description": "Modelle lernen aus gelabelten Daten, Vorhersagen zu treffen. Grundprinzip von Klassifikation und Regression mit Beispielen aus Bild- und Textverarbeitung.",
       "categoryId": "cat-fundamentals",
       "lessons": [
         {
           "id": "lesson-1",
           "title": "Regression vs. Klassifikation",
-          "summary": "Wann vorherzusagende Werte kontinuierlich oder diskret sind.",
+          "summary": "Wann vorherzusagende Werte kontinuierlich oder diskret sind. Unterschiede in Verlustfunktionen und Ausgabeschichten.",
           "topicId": "topic-supervised",
           "popularity": 95,
           "createdAt": "2024-01-12T09:00:00Z"
@@ -34,39 +49,79 @@
         {
           "id": "lesson-2",
           "title": "Train-/Test-Split",
-          "summary": "Warum Daten vor der Bewertung getrennt werden müssen.",
+          "summary": "Warum Daten vor der Bewertung getrennt werden müssen. Cross-Validation und Stratified Sampling.",
           "topicId": "topic-supervised",
           "popularity": 80,
           "createdAt": "2024-03-02T10:30:00Z"
+        },
+        {
+          "id": "lesson-32",
+          "title": "Loss Functions im Detail",
+          "summary": "MSE, Cross-Entropy, Hinge Loss und wann man welche Funktion einsetzt.",
+          "topicId": "topic-supervised",
+          "popularity": 78,
+          "createdAt": "2024-02-15T14:00:00Z"
         }
       ]
     },
     {
       "id": "topic-unsupervised",
       "name": "Unüberwachtes Lernen",
-      "description": "Strukturen in ungelabelten Daten entdecken, z. B. Clustering.",
+      "description": "Strukturen in ungelabelten Daten entdecken, z. B. Clustering, Dimensionsreduktion und Anomalieerkennung.",
       "categoryId": "cat-fundamentals",
       "lessons": [
         {
           "id": "lesson-3",
           "title": "K-Means in der Praxis",
-          "summary": "Iterative Clusterzuordnung und ihre Grenzen.",
+          "summary": "Iterative Clusterzuordnung und ihre Grenzen. Elbow-Methode und Silhouette-Score.",
           "topicId": "topic-unsupervised",
           "popularity": 70,
           "createdAt": "2024-04-18T14:00:00Z"
+        },
+        {
+          "id": "lesson-33",
+          "title": "Hauptkomponentenanalyse (PCA)",
+          "summary": "Dimensionsreduktion durch lineare Transformation. Eigenwerte und Eigenvektoren verständlich erklärt.",
+          "topicId": "topic-unsupervised",
+          "popularity": 65,
+          "createdAt": "2024-04-25T11:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-reinforcement",
+      "name": "Bestärkendes Lernen",
+      "description": "Agenten lernen durch Belohnung und Exploration. Q-Learning, Policy Gradients und Deep Reinforcement Learning.",
+      "categoryId": "cat-fundamentals",
+      "lessons": [
+        {
+          "id": "lesson-34",
+          "title": "Markov Decision Processes",
+          "summary": "Zustände, Aktionen und Belohnungen. Die mathematische Grundlage von RL.",
+          "topicId": "topic-reinforcement",
+          "popularity": 72,
+          "createdAt": "2024-05-10T10:00:00Z"
+        },
+        {
+          "id": "lesson-35",
+          "title": "Q-Learning Algorithmus",
+          "summary": "Bellman-Gleichung und temporale Differenz. Implementierung eines einfachen Q-Learners.",
+          "topicId": "topic-reinforcement",
+          "popularity": 68,
+          "createdAt": "2024-05-15T13:30:00Z"
         }
       ]
     },
     {
       "id": "topic-bias",
       "name": "Bias & Fairness",
-      "description": "Verzerrungen in Daten und Modellen erkennen und abschwächen.",
+      "description": "Verzerrungen in Daten und Modellen erkennen und abschwächen. Systematische Fehlentscheidungen vermeiden.",
       "categoryId": "cat-ethics",
       "lessons": [
         {
           "id": "lesson-4",
           "title": "Messung von Fairness-Metriken",
-          "summary": "Demographic Parity, Equalized Odds und ihre Kompromisse.",
+          "summary": "Demographic Parity, Equalized Odds und ihre Kompromisse. Trade-offs zwischen Fairness und Genauigkeit.",
           "topicId": "topic-bias",
           "popularity": 88,
           "createdAt": "2024-05-20T08:15:00Z"
@@ -74,23 +129,71 @@
         {
           "id": "lesson-5",
           "title": "Ursachen von Daten-Bias",
-          "summary": "Sampling-, Labeling- und historische Verzerrungen.",
+          "summary": "Sampling-, Labeling- und historische Verzerrungen. Wie Bias in Datensätze gelangt.",
           "topicId": "topic-bias",
           "popularity": 60,
           "createdAt": "2024-06-01T12:00:00Z"
+        },
+        {
+          "id": "lesson-36",
+          "title": "Fairness durch Algorithmen",
+          "summary": "Pre-processing, In-processing und Post-processing Techniken zur Bias-Reduktion.",
+          "topicId": "topic-bias",
+          "popularity": 75,
+          "createdAt": "2024-06-10T09:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-privacy",
+      "name": "Datenschutz & Sicherheit",
+      "description": "Privatsphäre-bewusste KI, Differenzielle Privatsphäre und Schutz vor adversarialen Angriffen.",
+      "categoryId": "cat-ethics",
+      "lessons": [
+        {
+          "id": "lesson-37",
+          "title": "Differenzielle Privatsphäre",
+          "summary": "Mathematische Garantien für Datenschutz. Rauschen hinzufügen für Privatsphäre.",
+          "topicId": "topic-privacy",
+          "popularity": 70,
+          "createdAt": "2024-06-20T14:30:00Z"
+        },
+        {
+          "id": "lesson-38",
+          "title": "Adversarial Attacks",
+          "summary": "Wie Angreifer KI-Systeme manipulieren können. FGSM und PGD Angriffe.",
+          "topicId": "topic-privacy",
+          "popularity": 65,
+          "createdAt": "2024-07-01T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-ai-law",
+      "name": "KI & Recht",
+      "description": "Rechtliche Rahmenbedingungen für KI-Anwendungen. EU AI Act, Urheberrecht und Haftungsfragen.",
+      "categoryId": "cat-ethics",
+      "lessons": [
+        {
+          "id": "lesson-39",
+          "title": "EU AI Act Überblick",
+          "summary": "Risikoklassen, Anforderungen und Konformitätsbewertung nach dem neuen EU-Gesetz.",
+          "topicId": "topic-ai-law",
+          "popularity": 85,
+          "createdAt": "2024-07-15T16:00:00Z"
         }
       ]
     },
     {
       "id": "topic-llms",
       "name": "Sprachmodelle (LLMs)",
-      "description": "Große Sprachmodelle, Prompting und ihre Anwendungsfelder.",
+      "description": "Große Sprachmodelle, ihre Architektur, Trainingsmethoden und Anwendungsfelder.",
       "categoryId": "cat-applications",
       "lessons": [
         {
           "id": "lesson-6",
           "title": "Prompt-Strategien",
-          "summary": "Few-Shot, Chain-of-Thought und Rollen-Prompts.",
+          "summary": "Few-Shot, Chain-of-Thought und Rollen-Prompts. Fortgeschrittene Prompt-Engineering-Techniken.",
           "topicId": "topic-llms",
           "popularity": 99,
           "createdAt": "2024-07-10T16:45:00Z"
@@ -98,26 +201,282 @@
         {
           "id": "lesson-7",
           "title": "Halluzinationen erkennen",
-          "summary": "Warum LLMs plausibel klingende Falschaussagen erzeugen.",
+          "summary": "Warum LLMs plausibel klingende Falschaussagen erzeugen und wie man sie reduziert.",
           "topicId": "topic-llms",
           "popularity": 92,
           "createdAt": "2024-08-05T11:20:00Z"
+        },
+        {
+          "id": "lesson-40",
+          "title": "Fine-Tuning vs. Prompting",
+          "summary": "Wann man Modelle anpassen sollte und wann Prompt-Engineering ausreicht.",
+          "topicId": "topic-llms",
+          "popularity": 87,
+          "createdAt": "2024-08-12T14:00:00Z"
         }
       ]
     },
     {
       "id": "topic-vision",
       "name": "Bilderkennung",
-      "description": "Computer-Vision-Modelle für Klassifikation und Detektion.",
+      "description": "Computer-Vision-Modelle für Klassifikation, Detektion, Segmentierung und Generierung.",
       "categoryId": "cat-applications",
       "lessons": [
         {
           "id": "lesson-8",
           "title": "CNN-Grundlagen",
-          "summary": "Faltungen, Pooling und Feature-Hierarchien.",
+          "summary": "Faltungen, Pooling und Feature-Hierarchien. Wie CNNs visuelle Muster erkennen.",
           "topicId": "topic-vision",
           "popularity": 75,
           "createdAt": "2024-09-01T09:30:00Z"
+        },
+        {
+          "id": "lesson-41",
+          "title": "Objektdetektion mit YOLO",
+          "summary": "Echtzeit-Objekterkennung mit You Only Look Once. Architektur und Training.",
+          "topicId": "topic-vision",
+          "popularity": 82,
+          "createdAt": "2024-09-10T11:00:00Z"
+        },
+        {
+          "id": "lesson-42",
+          "title": "Diffusionsmodelle",
+          "summary": "Wie Stable Diffusion und DALL-E Bilder generieren. Denoising Diffusion Probabilistic Models.",
+          "topicId": "topic-vision",
+          "popularity": 90,
+          "createdAt": "2024-09-20T15:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-nlp",
+      "name": "NLP-Anwendungen",
+      "description": "Praktische Anwendungen der Sprachverarbeitung: Übersetzung, Sentiment-Analyse, Textzusammenfassung.",
+      "categoryId": "cat-applications",
+      "lessons": [
+        {
+          "id": "lesson-43",
+          "title": "Maschinelle Übersetzung",
+          "summary": "Von regelbasierten Systemen zu neuronalen Übersetzungsmodellen. Transformer-Architektur.",
+          "topicId": "topic-nlp",
+          "popularity": 80,
+          "createdAt": "2024-09-25T10:00:00Z"
+        },
+        {
+          "id": "lesson-44",
+          "title": "Sentiment-Analyse",
+          "summary": "Stimmungserkennung in Texten. Von einfachen Wortlisten zu tiefen neuronalen Netzen.",
+          "topicId": "topic-nlp",
+          "popularity": 70,
+          "createdAt": "2024-10-01T13:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-transformers",
+      "name": "Transformer-Architektur",
+      "description": "Die revolutionäre Architektur hinter modernen Sprachmodellen. Self-Attention und Positional Encodings.",
+      "categoryId": "cat-architectures",
+      "lessons": [
+        {
+          "id": "lesson-9",
+          "title": "Self-Attention Mechanismus",
+          "summary": "Wie Tokens sich selbst gewichten. Query, Key, Value und Skalierte Dot-Produkt-Attention.",
+          "topicId": "topic-transformers",
+          "popularity": 95,
+          "createdAt": "2024-08-01T09:00:00Z"
+        },
+        {
+          "id": "lesson-45",
+          "title": "Multi-Head Attention",
+          "summary": "Warum mehrere Attention-Köpfe besser sind als einer. Parallelisierung und Modellkapazität.",
+          "topicId": "topic-transformers",
+          "popularity": 88,
+          "createdAt": "2024-08-10T10:30:00Z"
+        },
+        {
+          "id": "lesson-46",
+          "title": "Positional Encodings",
+          "summary": "Wie Transformer die Reihenfolge von Tokens ohne Rekursion verstehen. Sinusoidale vs. Learned Encodings.",
+          "topicId": "topic-transformers",
+          "popularity": 80,
+          "createdAt": "2024-08-18T14:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-cnns",
+      "name": "Convolutional Neural Networks",
+      "description": "Faltungsnetzwerke für Bildverarbeitung und andere räumliche Daten.",
+      "categoryId": "cat-architectures",
+      "lessons": [
+        {
+          "id": "lesson-47",
+          "title": "Architektur von ResNet",
+          "summary": "Skip Connections und Batch Normalization. Wie tiefe Netze durch Residual Learning trainierbar werden.",
+          "topicId": "topic-cnns",
+          "popularity": 85,
+          "createdAt": "2024-07-01T09:00:00Z"
+        },
+        {
+          "id": "lesson-48",
+          "title": "EfficientNet und Scaling Laws",
+          "summary": "Wie man Netze systematisch skaliert. Compound Scaling für optimale Performance.",
+          "topicId": "topic-cnns",
+          "popularity": 78,
+          "createdAt": "2024-07-15T14:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-rnns",
+      "name": "Rekurrente Netze (RNNs)",
+      "description": "Sequenzmodellierung mit rekurrenten Architektur. LSTMs, GRUs und ihre Anwendungen.",
+      "categoryId": "cat-architectures",
+      "lessons": [
+        {
+          "id": "lesson-49",
+          "title": "LSTM vs. GRU",
+          "summary": "Vergleich der beiden populären RNN-Varianten. Forget Gates, Input Gates und Output Gates.",
+          "topicId": "topic-rnns",
+          "popularity": 72,
+          "createdAt": "2024-06-20T11:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-data-cleaning",
+      "name": "Datenbereinigung",
+      "description": "Methoden zur Erkennung und Behebung von Datenqualitätsproblemen.",
+      "categoryId": "cat-data",
+      "lessons": [
+        {
+          "id": "lesson-10",
+          "title": "Handling Missing Values",
+          "summary": "Strategien für fehlende Werte: Löschen, Imputation, oder als eigene Kategorie behandeln.",
+          "topicId": "topic-data-cleaning",
+          "popularity": 80,
+          "createdAt": "2024-04-01T10:00:00Z"
+        },
+        {
+          "id": "lesson-50",
+          "title": "Ausreißererkennung",
+          "summary": "Statistische Methoden und maschinelle Lernansätze zur Identifikation von Ausreißern.",
+          "topicId": "topic-data-cleaning",
+          "popularity": 65,
+          "createdAt": "2024-04-10T15:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-feature-engineering",
+      "name": "Feature-Engineering",
+      "description": "Erstellung und Auswahl von Merkmalen für bessere Modellperformance.",
+      "categoryId": "cat-data",
+      "lessons": [
+        {
+          "id": "lesson-11",
+          "title": "Feature-Selection Methoden",
+          "summary": "Filter-, Wrapper- und Embedded-Methoden. Varianzanalyse, mutual information und L1-Regularisierung.",
+          "topicId": "topic-feature-engineering",
+          "popularity": 78,
+          "createdAt": "2024-05-05T09:30:00Z"
+        },
+        {
+          "id": "lesson-51",
+          "title": "Feature-Extraktion aus Text",
+          "summary": "TF-IDF, Word Embeddings und BERT für die Textverarbeitung.",
+          "topicId": "topic-feature-engineering",
+          "popularity": 85,
+          "createdAt": "2024-05-12T14:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-data-augmentation",
+      "name": "Datenaugmentierung",
+      "description": "Künstliche Vergrößerung von Datensätzen für bessere Generalisierung.",
+      "categoryId": "cat-data",
+      "lessons": [
+        {
+          "id": "lesson-52",
+          "title": "Bildaugmentierung",
+          "summary": "Drehung, Skalierung, Spiegelung und Farbänderungen. Bibliotheken wie Albumentations.",
+          "topicId": "topic-data-augmentation",
+          "popularity": 75,
+          "createdAt": "2024-05-20T10:00:00Z"
+        },
+        {
+          "id": "lesson-53",
+          "title": "Textaugmentierung",
+          "summary": "Synonym-Ersetzung, Back-Translation und Paraphrasierung für NLP-Datensätze.",
+          "topicId": "topic-data-augmentation",
+          "popularity": 60,
+          "createdAt": "2024-05-25T16:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-agents",
+      "name": "KI-Agenten",
+      "description": "Autonome Systeme, die Ziele verfolgen und mit ihrer Umgebung interagieren.",
+      "categoryId": "cat-future",
+      "lessons": [
+        {
+          "id": "lesson-12",
+          "title": "LLM-basierte Agenten",
+          "summary": "Von einfachen Chatbots zu autonomen Agenten mit Planung, Gedächtnis und Tool-Nutzung.",
+          "topicId": "topic-agents",
+          "popularity": 95,
+          "createdAt": "2024-10-01T09:00:00Z"
+        },
+        {
+          "id": "lesson-54",
+          "title": "ReAct: Reasoning + Acting",
+          "summary": "Kombination von logischem Denken und Handeln. Wie Agenten Probleme Schritt für Schritt lösen.",
+          "topicId": "topic-agents",
+          "popularity": 90,
+          "createdAt": "2024-10-10T14:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-multimodal",
+      "name": "Multimodale Modelle",
+      "description": "KI-Systeme, die mehrere Modalitäten (Text, Bild, Audio) gleichzeitig verarbeiten.",
+      "categoryId": "cat-future",
+      "lessons": [
+        {
+          "id": "lesson-13",
+          "title": "Vision-Language Modelle",
+          "summary": "CLIP, BLIP und andere Modelle, die Bilder und Text gemeinsam verstehen.",
+          "topicId": "topic-multimodal",
+          "popularity": 88,
+          "createdAt": "2024-10-15T11:00:00Z"
+        },
+        {
+          "id": "lesson-55",
+          "title": "Anwendungen multimodaler KI",
+          "summary": "Von Bildunterschriftung bis zu visueller Fragebeantwortung.",
+          "topicId": "topic-multimodal",
+          "popularity": 82,
+          "createdAt": "2024-10-20T16:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "topic-neurosymbolic",
+      "name": "Neuro-Symbolische KI",
+      "description": "Kombination von neuronalen Netzen mit symbolischer Logik für interpretierbare KI.",
+      "categoryId": "cat-future",
+      "lessons": [
+        {
+          "id": "lesson-56",
+          "title": "Grundlagen neuro-symbolischer Systeme",
+          "summary": "Wie neuronale und symbolische Ansätze sich ergänzen. Vorteile und Herausforderungen.",
+          "topicId": "topic-neurosymbolic",
+          "popularity": 70,
+          "createdAt": "2024-11-01T10:00:00Z"
         }
       ]
     }

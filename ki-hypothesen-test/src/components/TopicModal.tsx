@@ -30,20 +30,20 @@ export function TopicModal({ topic, category, onClose }: TopicModalProps) {
       role="presentation"
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-xl"
+        className="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-xl animate-slide-up"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="topic-modal-title"
       >
-        <header className="flex items-start justify-between border-b border-slate-200 px-6 py-4">
+        <header className="flex items-start justify-between border-b border-secondary-200 px-6 py-4">
           <div>
             {category && (
-              <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary-600">
                 {category.name}
               </p>
             )}
-            <h2 id="topic-modal-title" className="text-lg font-semibold text-slate-900">
+            <h2 id="topic-modal-title" className="text-lg font-semibold text-secondary-900">
               {topic.name}
             </h2>
           </div>
@@ -51,22 +51,22 @@ export function TopicModal({ topic, category, onClose }: TopicModalProps) {
             type="button"
             onClick={onClose}
             aria-label="Schließen"
-            className="flex h-8 w-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-secondary-500 hover:bg-secondary-100 transition-colors"
           >
-            ✕
+            ×
           </button>
         </header>
 
-        <div className="max-h-[60vh] overflow-y-auto px-6 py-4">
-          <p className="text-sm leading-relaxed text-slate-700">
+        <div className="max-h-[60vh] overflow-y-auto px-6 py-4 scrollbar-thin">
+          <p className="text-sm leading-relaxed text-secondary-700">
             {topic.description}
           </p>
 
-          <h3 className="mt-5 mb-2 text-sm font-semibold text-slate-800">
+          <h3 className="mt-5 mb-2 text-sm font-semibold text-secondary-800">
             Verwandte Lektionen ({topic.lessons.length})
           </h3>
           {topic.lessons.length === 0 ? (
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-secondary-400">
               Für dieses Thema gibt es noch keine Lektionen.
             </p>
           ) : (
@@ -74,12 +74,12 @@ export function TopicModal({ topic, category, onClose }: TopicModalProps) {
               {topic.lessons.map((lesson) => (
                 <li
                   key={lesson.id}
-                  className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2"
+                  className="rounded-lg border border-secondary-200 bg-secondary-50 px-3 py-2"
                 >
-                  <p className="text-sm font-medium text-slate-800">
+                  <p className="text-sm font-medium text-secondary-800">
                     {lesson.title}
                   </p>
-                  <p className="text-xs text-slate-600">{lesson.summary}</p>
+                  <p className="text-xs text-secondary-600">{lesson.summary}</p>
                 </li>
               ))}
             </ul>
