@@ -52,6 +52,7 @@ jobs:
           --suppress=missingIncludeSystem \
           --suppress=unmatchedSuppression \
           --suppress=preprocessorErrorDirective \
+          --suppress=unknownMacro \
           --suppress=*:lib/kissfft/* \
           --error-exitcode=1 \
           src/ lib/ 

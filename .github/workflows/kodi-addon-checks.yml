@@ -30,16 +30,27 @@ jobs:
     - name: Validate addon.xml structure
       run: |
         # Check if addon.xml exists or needs to be generated
+        ADDON_FILE=""
         if [ -f "addon.xml" ]; then
-          echo "Validating existing addon.xml"
-          xmllint --noout --schema https://raw.githubusercontent.com/xbmc/xbmc/master/xbmc/addons/dtd/addon.dtd addon.xml || true
+          ADDON_FILE="addon.xml"
+        elif [ -f "visualization.matrix/addon.xml.in" ]; then
+          ADDON_FILE="visualization.matrix/addon.xml.in"
         elif [ -f "addon.xml.in" ]; then
-          echo "addon.xml.in found - this will be processed by CMake"
-          # Check for required fields in addon.xml.in
-          grep -q "id=\"visualization.matrix\"" addon.xml.in || { echo "Missing addon id"; exit 1; }
-          grep -q "version=" addon.xml.in || { echo "Missing version"; exit 1; }
-          grep -q "name=" addon.xml.in || { echo "Missing name"; exit 1; }
-          grep -q "provider=" addon.xml.in || { echo "Missing provider"; exit 1; }
+          ADDON_FILE="addon.xml.in"
+        fi
+        
+        if [ -n "$ADDON_FILE" ]; then
+          if [ "$ADDON_FILE" = "addon.xml" ]; then
+            echo "Validating existing addon.xml"
+            xmllint --noout --schema https://raw.githubusercontent.com/xbmc/xbmc/master/xbmc/addons/dtd/addon.dtd "$ADDON_FILE" || true
+          else
+            echo "$ADDON_FILE found - this will be processed by CMake"
+          fi
+          # Check for required fields
+          grep -q "id=\"visualization.matrix\"" "$ADDON_FILE" || { echo "Missing addon id"; exit 1; }
+          grep -q "version=" "$ADDON_FILE" || { echo "Missing version"; exit 1; }
+          grep -q "name=" "$ADDON_FILE" || { echo "Missing name"; exit 1; }
+          grep -q "provider=" "$ADDON_FILE" || { echo "Missing provider"; exit 1; }
         else
           echo "No addon.xml or addon.xml.in found"
           exit 1
@@ -47,10 +58,17 @@ jobs:
 
     - name: Check addon version format
       run: |
+        ADDON_FILE=""
         if [ -f "addon.xml" ]; then
-          VERSION=$(grep -oP 'version="\K[^"]+' addon.xml)
+          ADDON_FILE="addon.xml"
+        elif [ -f "visualization.matrix/addon.xml.in" ]; then
+          ADDON_FILE="visualization.matrix/addon.xml.in"
         elif [ -f "addon.xml.in" ]; then
-          VERSION=$(grep -oP 'version="\K[^"]+' addon.xml.in)
+          ADDON_FILE="addon.xml.in"
+        fi
+        
+        if [ -n "$ADDON_FILE" ]; then
+          VERSION=$(grep -oP 'version="\K[^"]+' "$ADDON_FILE")
         fi
         
         if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then

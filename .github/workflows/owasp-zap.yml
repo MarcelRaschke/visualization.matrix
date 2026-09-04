@@ -23,7 +23,7 @@ jobs:
     name: OWASP ZAP Scan
     runs-on: ubuntu-latest
     container:
-      image: owasp/zap2docker-weekly:latest
+      image: ghcr.io/zaproxy/zaproxy:stable
 
     steps:
     - name: Checkout repository

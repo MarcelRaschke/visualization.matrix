@@ -30,12 +30,15 @@ jobs:
   fuzz-kissfft:
     name: Fuzz kissfft library
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/google/oss-fuzz-base:latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Install AFL++
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y afl++ cmake clang libgl1-mesa-dev
 
     - name: Cache AFL++ corpus
       uses: actions/cache@v3
@@ -46,10 +49,6 @@ jobs:
         key: ${{ runner.os }}-afl-corpus-${{ hashFiles('lib/kissfft/**', 'src/**') }}
         restore-keys: |
           ${{ runner.os }}-afl-corpus-
-
-    - name: Install dependencies
-      run: |
-        apt-get update && apt-get install -y cmake clang libgl1-mesa-dev
 
     - name: Build kissfft with fuzzing instrumentation
       run: |
