@@ -173,7 +173,11 @@ jobs:
     - name: Configure CMake
       run: |
         mkdir -p build && cd build
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} ..
+        cmake -G Ninja \
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+          -DBUILD_TESTING=ON \
+          -DENABLE_COVERAGE=ON \
+          ..
 
     - name: Build project
       run: |

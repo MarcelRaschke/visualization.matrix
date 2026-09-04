@@ -9,50 +9,8 @@
 #include <cmath>
 #include <vector>
 
-// Include the functions to test from main.cpp
-// We need to extract the pure functions that don't depend on OpenGL/Kodi
-
-// --- Copied from main.cpp for testing ---
-
-#define AUDIO_BUFFER (1024)
-#define NUM_BANDS (AUDIO_BUFFER / 2)
-
-struct kiss_fft_cpx
-{
-  float r;
-  float i;
-};
-
-// BlackmanWindow function (copied from main.cpp)
-float BlackmanWindow(float in, size_t i, size_t length)
-{
-  double alpha = 0.16;
-  double a0 = 0.5 * (1.0 - alpha);
-  double a1 = 0.5;
-  double a2 = 0.5 * alpha;
-
-  float x = (float)i / (float)length;
-  return in * (a0 - a1 * cos(2.0 * M_PI * x) + a2 * cos(4.0 * M_PI * x));
-}
-
-// LinearToDecibels function (copied from main.cpp)
-float LinearToDecibels(float linear)
-{
-  if (!linear)
-    return -1000;
-  return 20 * log10f(linear);
-}
-
-// SmoothingOverTime function (copied from main.cpp)
-void SmoothingOverTime(float* outputBuffer, float* lastOutputBuffer, kiss_fft_cpx* inputBuffer, size_t length, float smoothingTimeConstant, unsigned int fftSize)
-{
-  for (size_t i = 0; i < length; i++)
-  {
-    kiss_fft_cpx c = inputBuffer[i];
-    float magnitude = sqrt(c.r * c.r + c.i * c.i) / (float)fftSize;
-    outputBuffer[i] = smoothingTimeConstant * lastOutputBuffer[i] + (1.0 - smoothingTimeConstant) * magnitude;
-  }
-}
+// Include the actual math utilities
+#include "../src/math_utils.h"
 
 // --- Tests ---
 
