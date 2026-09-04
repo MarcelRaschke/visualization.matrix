@@ -42,7 +42,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake g++ make libgl1-mesa-dev
+        sudo apt-get install -y cmake g++ make libgl1-mesa-dev libpng-dev
 
     - name: Configure CMake with coverage
       run: |

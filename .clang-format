@@ -26,7 +26,7 @@ PenaltyExcessCharacter: 1000
 PenaltyReturnTypeOnItsOwnLine: 200
 
 # C++ specific settings
-Standard: Cpp17
+Standard: c++17
 DerivePointerAlignment: true
 PointerAlignment: Right
 ReferenceAlignment: Right

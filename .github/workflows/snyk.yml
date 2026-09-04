@@ -39,12 +39,13 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-snyk-
 
-    - name: Run Snyk to check for vulnerabilities
+    - name: Run Snyk Code (C/C++ support)
       uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --all-projects --severity-threshold=high
+        command: code
+        args: test --severity-threshold=high
 
     - name: Upload Snyk report
       uses: actions/upload-artifact@v4
@@ -62,14 +63,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Cache Snyk Code
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/snyk-code
-        key: ${{ runner.os }}-snyk-code-${{ hashFiles('src/**', 'lib/**') }}
-        restore-keys: |
-          ${{ runner.os }}-snyk-code-
-
     - name: Run Snyk Code
       uses: snyk/actions/node@master
       env:
@@ -83,5 +76,5 @@ jobs:
       if: always()
       with:
         name: snyk-code-report
-        path: .snyk-code
+        path: .snyk
         retention-days: 30
