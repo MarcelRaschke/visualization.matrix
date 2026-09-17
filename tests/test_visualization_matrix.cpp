@@ -110,7 +110,7 @@ TEST_F(VisualizationMatrixTest, SmoothingOverTime_ZeroInput)
     inputBuffer[i].i = 0.0f;
   }
   
-  SmoothingOverTime(outputBuffer.data(), lastOutputBuffer.data(), inputBuffer.data(), NUM_BANDS, 0.5f, AUDIO_BUFFER);
+  SmoothingOverTime(outputBuffer, lastOutputBuffer, inputBuffer.data(), NUM_BANDS, 0.5f, AUDIO_BUFFER);
   
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
@@ -132,7 +132,7 @@ TEST_F(VisualizationMatrixTest, SmoothingOverTime_NonZeroInput)
     inputBuffer[i].i = 0.0f;
   }
   
-  SmoothingOverTime(outputBuffer.data(), lastOutputBuffer.data(), inputBuffer.data(), NUM_BANDS, 0.0f, AUDIO_BUFFER);
+  SmoothingOverTime(outputBuffer, lastOutputBuffer, inputBuffer.data(), NUM_BANDS, 0.0f, AUDIO_BUFFER);
   
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
@@ -156,7 +156,7 @@ TEST_F(VisualizationMatrixTest, SmoothingOverTime_FullSmoothing)
   }
   
   // With smoothingTimeConstant = 1.0, output should be: 1.0 * lastOutputBuffer[i] + 0 * magnitude = lastOutputBuffer[i]
-  SmoothingOverTime(outputBuffer.data(), lastOutputBuffer.data(), inputBuffer.data(), NUM_BANDS, 1.0f, AUDIO_BUFFER);
+  SmoothingOverTime(outputBuffer, lastOutputBuffer, inputBuffer.data(), NUM_BANDS, 1.0f, AUDIO_BUFFER);
   
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
