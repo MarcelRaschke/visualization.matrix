@@ -14,6 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <kissfft/kiss_fft.h>
+#include "math_utils.h"
 
 #include <vector>
 #include <string>
@@ -56,18 +57,9 @@ private:
   GLuint CreateTexture(GLint format, unsigned int w, unsigned int h, const GLvoid* data);
   GLuint CreateTexture(const GLvoid* data, GLint format, unsigned int w, unsigned int h, GLint internalFormat, GLint scaling, GLint repeat);
   GLuint CreateTexture(const std::string& file, GLint internalFormat, GLint scaling, GLint repeat);
-  float BlackmanWindow(float in, size_t i, size_t length);
-  void SmoothingOverTime(std::vector<float>& outputBuffer, const std::vector<float>& lastOutputBuffer, 
-                         kiss_fft_cpx* inputBuffer, size_t length, float smoothingTimeConstant, unsigned int fftSize);
-  float LinearToDecibels(float linear);
   int DetermineBitsPrecision();
   bool UpdateAlbumart();
   void GatherDefines();
-
-  // FFT configuration
-  static constexpr size_t AUDIO_BUFFER = 1024;
-  static constexpr size_t NUM_BANDS = AUDIO_BUFFER / 2;
-
   // Audio processing
   kiss_fft_cfg m_kissCfg;
   std::vector<GLubyte> m_audioData;

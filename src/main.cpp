@@ -6,6 +6,7 @@
  */
 
 #include "main.h"
+#include "math_utils.h"
 
 #include <regex>
 
@@ -19,7 +20,6 @@
 
 #include <algorithm>
 #include <chrono>
-#include <cmath>
 #include <memory>
 
 #define SMOOTHING_TIME_CONSTANT (0.5f) // default 0.8
@@ -671,35 +671,6 @@ GLuint CVisualizationMatrix::CreateTexture(const std::string& file, GLint intern
   image = nullptr;
 
   return texture;
-}
-
-float CVisualizationMatrix::BlackmanWindow(float in, size_t i, size_t length)
-{
-  constexpr double alpha = 0.16;
-  constexpr double a0 = 0.5 * (1.0 - alpha);
-  constexpr double a1 = 0.5;
-  constexpr double a2 = 0.5 * alpha;
-
-  const float x = static_cast<float>(i) / static_cast<float>(length);
-  return in * static_cast<float>(a0 - a1 * std::cos(2.0 * M_PI * x) + a2 * std::cos(4.0 * M_PI * x));
-}
-
-void CVisualizationMatrix::SmoothingOverTime(std::vector<float>& outputBuffer, const std::vector<float>& lastOutputBuffer, 
-                                           kiss_fft_cpx* inputBuffer, size_t length, float smoothingTimeConstant, unsigned int fftSize)
-{
-  for (size_t i = 0; i < length; i++)
-  {
-    const kiss_fft_cpx c = inputBuffer[i];
-    const float magnitude = std::sqrt(c.r * c.r + c.i * c.i) / static_cast<float>(fftSize);
-    outputBuffer[i] = smoothingTimeConstant * lastOutputBuffer[i] + (1.0f - smoothingTimeConstant) * magnitude;
-  }
-}
-
-float CVisualizationMatrix::LinearToDecibels(float linear)
-{
-  if (!linear)
-    return -1000.0f;
-  return 20.0f * std::log10(linear);
 }
 
 int CVisualizationMatrix::DetermineBitsPrecision()

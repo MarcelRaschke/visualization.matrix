@@ -75,6 +75,7 @@ set(MATRIX_SOURCES
 
 set(MATRIX_HEADERS
   src/main.h
+  src/math_utils.h
   src/tracyprofiler.h
   src/stb_image.h
   ${kissfft_SOURCE_DIR}/kiss_fft.h
