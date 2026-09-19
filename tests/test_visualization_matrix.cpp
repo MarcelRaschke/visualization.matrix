@@ -5,8 +5,8 @@
  *  See LICENSE.md for more information.
  */
 
-#include <gtest/gtest.h>
 #include <cmath>
+#include <gtest/gtest.h>
 #include <vector>
 
 // Include the actual math utilities
@@ -17,8 +17,12 @@
 class VisualizationMatrixTest : public ::testing::Test
 {
 protected:
-  void SetUp() override {}
-  void TearDown() override {}
+  void SetUp() override
+  {
+  }
+  void TearDown() override
+  {
+  }
 };
 
 // Test BlackmanWindow function
@@ -103,18 +107,24 @@ TEST_F(VisualizationMatrixTest, SmoothingOverTime_ZeroInput)
   std::vector<float> outputBuffer(NUM_BANDS, 0.0f);
   std::vector<float> lastOutputBuffer(NUM_BANDS, 1.0f);
   std::vector<kiss_fft_cpx> inputBuffer(NUM_BANDS);
-  
+
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
     inputBuffer[i].r = 0.0f;
     inputBuffer[i].i = 0.0f;
   }
-  
-  SmoothingOverTime(outputBuffer, lastOutputBuffer, inputBuffer.data(), NUM_BANDS, 0.5f, AUDIO_BUFFER);
-  
+
+  SmoothingOverTime(outputBuffer,
+                    lastOutputBuffer,
+                    inputBuffer.data(),
+                    NUM_BANDS,
+                    0.5f,
+                    AUDIO_BUFFER);
+
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
-    // With zero input, output should be: 0.5 * lastOutputBuffer[i] + 0.5 * 0 = 0.5 * lastOutputBuffer[i]
+    // With zero input, output should be: 0.5 * lastOutputBuffer[i] + 0.5 * 0 = 0.5 *
+    // lastOutputBuffer[i]
     EXPECT_NEAR(outputBuffer[i], 0.5f, 0.0001f);
   }
 }
@@ -124,16 +134,21 @@ TEST_F(VisualizationMatrixTest, SmoothingOverTime_NonZeroInput)
   std::vector<float> outputBuffer(NUM_BANDS, 0.0f);
   std::vector<float> lastOutputBuffer(NUM_BANDS, 0.0f);
   std::vector<kiss_fft_cpx> inputBuffer(NUM_BANDS);
-  
+
   // Set up input buffer with magnitude 1.0 for all bands
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
     inputBuffer[i].r = AUDIO_BUFFER;  // magnitude * fftSize = 1.0 * 1024
     inputBuffer[i].i = 0.0f;
   }
-  
-  SmoothingOverTime(outputBuffer, lastOutputBuffer, inputBuffer.data(), NUM_BANDS, 0.0f, AUDIO_BUFFER);
-  
+
+  SmoothingOverTime(outputBuffer,
+                    lastOutputBuffer,
+                    inputBuffer.data(),
+                    NUM_BANDS,
+                    0.0f,
+                    AUDIO_BUFFER);
+
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
     // With smoothingTimeConstant = 0, output should be: 0 * last + 1 * magnitude = magnitude
@@ -147,17 +162,23 @@ TEST_F(VisualizationMatrixTest, SmoothingOverTime_FullSmoothing)
   std::vector<float> outputBuffer(NUM_BANDS, 0.0f);
   std::vector<float> lastOutputBuffer(NUM_BANDS, 1.0f);
   std::vector<kiss_fft_cpx> inputBuffer(NUM_BANDS);
-  
+
   // Set up input buffer with magnitude 0.0 for all bands
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
     inputBuffer[i].r = 0.0f;
     inputBuffer[i].i = 0.0f;
   }
-  
-  // With smoothingTimeConstant = 1.0, output should be: 1.0 * lastOutputBuffer[i] + 0 * magnitude = lastOutputBuffer[i]
-  SmoothingOverTime(outputBuffer, lastOutputBuffer, inputBuffer.data(), NUM_BANDS, 1.0f, AUDIO_BUFFER);
-  
+
+  // With smoothingTimeConstant = 1.0, output should be: 1.0 * lastOutputBuffer[i] + 0 * magnitude =
+  // lastOutputBuffer[i]
+  SmoothingOverTime(outputBuffer,
+                    lastOutputBuffer,
+                    inputBuffer.data(),
+                    NUM_BANDS,
+                    1.0f,
+                    AUDIO_BUFFER);
+
   for (size_t i = 0; i < NUM_BANDS; i++)
   {
     EXPECT_NEAR(outputBuffer[i], 1.0f, 0.0001f);

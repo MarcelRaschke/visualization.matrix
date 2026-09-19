@@ -7,22 +7,21 @@
 
 #pragma once
 
+#include <glm/ext.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <kodi/addon-instance/Visualization.h>
 #include <kodi/gui/gl/Shader.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
-#include <kissfft/kiss_fft.h>
 #include "math_utils.h"
+#include <kissfft/kiss_fft.h>
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
-class ATTRIBUTE_HIDDEN CVisualizationMatrix
-  : public kodi::addon::CAddonBase
-  , public kodi::addon::CInstanceVisualization
+class ATTRIBUTE_HIDDEN CVisualizationMatrix : public kodi::addon::CAddonBase,
+                                              public kodi::addon::CInstanceVisualization
 {
 public:
   CVisualizationMatrix();
@@ -36,7 +35,10 @@ public:
 
   bool Start(int channels, int samplesPerSec, int bitsPerSample, std::string songName) override;
   void Stop() override;
-  void AudioData(const float* audioData, int audioDataLength, float* freqData, int freqDataLength) override;
+  void AudioData(const float* audioData,
+                 int audioDataLength,
+                 float* freqData,
+                 int freqDataLength) override;
   void Render() override;
   bool GetPresets(std::vector<std::string>& presets) override;
   int GetActivePreset() override;
@@ -55,7 +57,13 @@ private:
   void UnloadPreset();
   void UnloadTextures();
   GLuint CreateTexture(GLint format, unsigned int w, unsigned int h, const GLvoid* data);
-  GLuint CreateTexture(const GLvoid* data, GLint format, unsigned int w, unsigned int h, GLint internalFormat, GLint scaling, GLint repeat);
+  GLuint CreateTexture(const GLvoid* data,
+                       GLint format,
+                       unsigned int w,
+                       unsigned int h,
+                       GLint internalFormat,
+                       GLint scaling,
+                       GLint repeat);
   GLuint CreateTexture(const std::string& file, GLint internalFormat, GLint scaling, GLint repeat);
   int DetermineBitsPrecision();
   bool UpdateAlbumart();
@@ -68,7 +76,7 @@ private:
 
   // State
   bool m_initialized = false;
-  int64_t m_initialTime = 0; // in ms
+  int64_t m_initialTime = 0;  // in ms
   double m_lastAlbumChange = 0;
   bool m_AlbumNeedsUpload = true;
   bool m_lowpower = false;
@@ -84,8 +92,8 @@ private:
   float m_rainHighlights = 0.0f;
   bool m_crtCurve = false;
 
-  int m_samplesPerSec = 0; // Given by Start(...)
-  bool m_needsUpload = true; // Set by AudioData(...) to mark presence of data
+  int m_samplesPerSec = 0;    // Given by Start(...)
+  bool m_needsUpload = true;  // Set by AudioData(...) to mark presence of data
 
   std::string m_albumArt;
   std::string m_defines;

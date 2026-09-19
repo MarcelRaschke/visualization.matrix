@@ -32,7 +32,8 @@ inline float BlackmanWindow(float in, size_t i, size_t length)
   constexpr double a2 = 0.5 * alpha;
 
   const float x = static_cast<float>(i) / static_cast<float>(length);
-  return in * static_cast<float>(a0 - a1 * std::cos(2.0 * M_PI * x) + a2 * std::cos(4.0 * M_PI * x));
+  return in *
+         static_cast<float>(a0 - a1 * std::cos(2.0 * M_PI * x) + a2 * std::cos(4.0 * M_PI * x));
 }
 
 /**
@@ -50,13 +51,18 @@ inline float LinearToDecibels(float linear)
  * Apply exponential smoothing to magnitude values over time.
  * This smooths the FFT output to reduce flickering in the visualization.
  */
-inline void SmoothingOverTime(std::vector<float>& outputBuffer, const std::vector<float>& lastOutputBuffer,
-                              kiss_fft_cpx* inputBuffer, size_t length, float smoothingTimeConstant, unsigned int fftSize)
+inline void SmoothingOverTime(std::vector<float>& outputBuffer,
+                              const std::vector<float>& lastOutputBuffer,
+                              kiss_fft_cpx* inputBuffer,
+                              size_t length,
+                              float smoothingTimeConstant,
+                              unsigned int fftSize)
 {
   for (size_t i = 0; i < length; i++)
   {
     const kiss_fft_cpx c = inputBuffer[i];
     const float magnitude = std::sqrt(c.r * c.r + c.i * c.i) / static_cast<float>(fftSize);
-    outputBuffer[i] = smoothingTimeConstant * lastOutputBuffer[i] + (1.0f - smoothingTimeConstant) * magnitude;
+    outputBuffer[i] =
+      smoothingTimeConstant * lastOutputBuffer[i] + (1.0f - smoothingTimeConstant) * magnitude;
   }
 }

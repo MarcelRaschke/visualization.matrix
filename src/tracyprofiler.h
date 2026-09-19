@@ -29,12 +29,12 @@
 //     runtime overhead in production builds.
 
 #if defined(TRACY_ENABLE)
-#  include <tracy/Tracy.hpp>
-#  define TRACY_ZONE(name) ZoneScopedN(name)
-#  define TRACY_FRAME() FrameMark
-#  define TRACY_TEXT(str, len) ZoneText(str, len)
+#include <tracy/Tracy.hpp>
+#define TRACY_ZONE(name) ZoneScopedN(name)
+#define TRACY_FRAME() FrameMark
+#define TRACY_TEXT(str, len) ZoneText(str, len)
 #else
-#  define TRACY_ZONE(name) ((void)0)
-#  define TRACY_FRAME() ((void)0)
-#  define TRACY_TEXT(str, len) ((void)0)
+#define TRACY_ZONE(name) ((void)0)
+#define TRACY_FRAME() ((void)0)
+#define TRACY_TEXT(str, len) ((void)0)
 #endif
