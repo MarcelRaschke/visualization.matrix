@@ -70,6 +70,10 @@ endif()
 # Source files
 set(MATRIX_SOURCES
   src/main.cpp
+  src/audio/audio_processor.cpp
+  src/textures/texture_manager.cpp
+  src/renderer/renderer.cpp
+  src/presets/preset_manager.cpp
   ${kissfft_SOURCE_DIR}/kiss_fft.c
 )
 
@@ -78,6 +82,10 @@ set(MATRIX_HEADERS
   src/math_utils.h
   src/tracyprofiler.h
   src/stb_image.h
+  src/audio/audio_processor.h
+  src/textures/texture_manager.h
+  src/renderer/renderer.h
+  src/presets/preset_manager.h
   ${kissfft_SOURCE_DIR}/kiss_fft.h
   ${kissfft_SOURCE_DIR}/kiss_fft_log.h
   ${kissfft_SOURCE_DIR}/_kiss_fft_guts.h
@@ -96,6 +104,15 @@ target_include_directories(kissfft PUBLIC ${kissfft_SOURCE_DIR})
 add_library(visualization.matrix MODULE
   ${MATRIX_SOURCES}
   ${MATRIX_HEADERS}
+)
+
+# Set include directories for the new modular structure
+target_include_directories(visualization.matrix PRIVATE
+  ${PROJECT_SOURCE_DIR}/src
+  ${PROJECT_SOURCE_DIR}/src/audio
+  ${PROJECT_SOURCE_DIR}/src/textures
+  ${PROJECT_SOURCE_DIR}/src/renderer
+  ${PROJECT_SOURCE_DIR}/src/presets
 )
 
 # Link libraries
