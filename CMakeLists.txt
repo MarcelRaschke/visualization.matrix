@@ -107,7 +107,7 @@ add_library(visualization.matrix MODULE
 )
 
 # Set include directories for the new modular structure
-target_include_directories(visualization.matrix PRIVATE
+target_include_directories(visualization.matrix PUBLIC
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_SOURCE_DIR}/src/audio
   ${PROJECT_SOURCE_DIR}/src/textures

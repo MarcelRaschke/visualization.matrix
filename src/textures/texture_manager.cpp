@@ -3,6 +3,9 @@
  *
  *  SPDX-License-Identifier: GPL-2.0-or-later
  *  See LICENSE.md for more information.
+ *
+ *  DCO: I certify that this contribution is licensed under the GPL-2.0-or-later
+ *       and I have the right to submit it under this license.
  */
 
 #include "texture_manager.h"

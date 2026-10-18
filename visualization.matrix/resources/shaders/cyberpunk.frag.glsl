@@ -1,6 +1,9 @@
 // Cyberpunk Matrix Preset
 // GLSL Fragment Shader for visualization.matrix
 // Features: Neon grid, scanning lines, glitch effects, audio-reactive
+//
+// DCO: I certify that this contribution is licensed under the GPL-2.0-or-later
+//      and I have the right to submit it under this license.
 
 void main(void)
 {
