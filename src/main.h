@@ -11,10 +11,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <kodi/addon-instance/Visualization.h>
-#include <kodi/gui/gl/Shader.h>
 
-#include "math_utils.h"
-#include <kissfft/kiss_fft.h>
+#include "audio/audio_processor.h"
+#include "renderer/renderer.h"
+#include "textures/texture_manager.h"
+#include "presets/preset_manager.h"
 
 #include <memory>
 #include <string>
@@ -49,64 +50,32 @@ public:
   bool UpdateAlbumart(std::string albumart) override;
 
 private:
-  void RenderTo(GLuint shader, GLuint effect_fb);
-  void Mix(float* destination, const float* source, size_t frames, size_t channels);
-  void WriteToBuffer(const float* input, size_t length, size_t channels);
-  void Launch(int preset);
-  void LoadPreset(const std::string& shaderPath);
-  void UnloadPreset();
-  void UnloadTextures();
-  GLuint CreateTexture(GLint format, unsigned int w, unsigned int h, const GLvoid* data);
-  GLuint CreateTexture(const GLvoid* data,
-                       GLint format,
-                       unsigned int w,
-                       unsigned int h,
-                       GLint internalFormat,
-                       GLint scaling,
-                       GLint repeat);
-  GLuint CreateTexture(const std::string& file, GLint internalFormat, GLint scaling, GLint repeat);
-  int DetermineBitsPrecision();
-  bool UpdateAlbumart();
-  void GatherDefines();
-  // Audio processing
-  kiss_fft_cfg m_kissCfg;
-  std::vector<GLubyte> m_audioData;
-  std::vector<float> m_magnitudeBuffer;
-  std::vector<float> m_pcm;
+  // Component managers
+  AudioProcessor m_audioProcessor;
+  TextureManager m_textureManager;
+  Renderer m_renderer;
+  PresetManager m_presetManager;
 
   // State
   bool m_initialized = false;
   int64_t m_initialTime = 0;  // in ms
   double m_lastAlbumChange = 0;
+  int m_currentPreset = 0;
   bool m_AlbumNeedsUpload = true;
-  bool m_lowpower = false;
   float m_albumX = 0.0f;
   float m_albumY = 0.0f;
-  int m_bitsPrecision = 0;
-  int m_currentPreset = 0;
+
+  // Settings
   float m_dotMode = false;
   float m_dotSize = 0.0f;
   float m_fallSpeed = 0.25f;
   float m_distortThreshold = 0.0f;
   float m_noiseFluctuation = 0.0f;
   float m_rainHighlights = 0.0f;
+  bool m_lowpower = false;
   bool m_crtCurve = false;
-
-  int m_samplesPerSec = 0;    // Given by Start(...)
-  bool m_needsUpload = true;  // Set by AudioData(...) to mark presence of data
-
-  std::string m_albumArt;
-  std::string m_defines;
-  std::string m_usedShaderFile;
-
-  // OpenGL locations
-  GLint m_attrGlobalTimeLoc = 0;
-  GLint m_attrAlbumPositionLoc = 0;
-  GLint m_attrAlbumRGBLoc = 0;
-  GLint m_attrChannelLoc[4] = {0};
-  GLuint m_channelTextures[4] = {0};
-
-  kodi::gui::gl::CShaderProgram m_matrixShader;
+  int m_bitsPrecision = 0;
+  int m_samplesPerSec = 0;
 
   struct DotColor
   {
@@ -115,22 +84,55 @@ private:
     float blue = 0.0f;
   } m_dotColor;
 
-  struct State
-  {
-    GLuint vertex_buffer = 0;
-    GLuint attr_vertex_e = 0;
-    GLuint attr_vertex_r = 0;
-    GLuint uTexture = 0;
-    GLuint effect_fb = 0;
-    GLuint framebuffer_texture = 0;
-    GLuint uScale = 0;
-    int fbwidth = 0;
-    int fbheight = 0;
-  } m_state;
+  std::string m_albumArt;
+  std::string m_defines;
+  std::string m_usedShaderFile;
 
-  struct ShaderPath
+  // Shader texture info
+  struct ShaderTextureInfo
   {
     bool audio = false;
     std::string texture;
   } m_shaderTextures[4];
+
+  // Preset channel info
+  struct PresetChannelInfo
+  {
+    int channel[4];
+  };
+
+  /**
+   * @brief Launch a preset.
+   * @param preset Preset index
+   */
+  void Launch(int preset);
+
+  /**
+   * @brief Load a preset shader.
+   * @param shaderPath Path to shader
+   */
+  void LoadPreset(const std::string& shaderPath);
+
+  /**
+   * @brief Unload current preset.
+   */
+  void UnloadPreset();
+
+  /**
+   * @brief Gather shader defines.
+   */
+  void GatherDefines();
+
+  /**
+   * @brief Update album art texture.
+   * @param albumart Path to album art
+   * @return true if updated
+   */
+  bool UpdateAlbumart();
+
+  /**
+   * @brief Determine bits precision for timer.
+   * @return int Number of bits
+   */
+  int DetermineBitsPrecision();
 };
